@@ -9,6 +9,14 @@ CLMS::Component::Component(const std::string& componentName, const std::string& 
     this->componentFile.open(this->componentFileName, std::ios::in | std::ios::app);
 }
 
+CLMS::Component::Component(const CLMS::Component& component) {
+    this->componentName = component.componentName;
+    this->componentFileName = component.componentFileName;
+    this->index = std::map<std::string, uint32_t>();
+
+    this->componentFile.open(this->componentFileName, std::ios::in | std::ios::app);
+}
+
 CLMS::Component::~Component() {
     this->componentFile.close();
 }
