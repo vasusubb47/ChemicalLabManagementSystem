@@ -3,18 +3,19 @@
 #include "../lib/util.hpp"
 #include "../lib/component.hpp"
 #include "../lib/userComponent.hpp"
-// #include "../lib/config.hpp"
 
 int main(int argc, char** argv) {
-    // CLMS::loadConfig();
-    // CLMS::printConfig();
-    // int i = 0;
-    // while (i < 99) {
-    //     std::cout << "(" << (i+1) << ") Current Time : " << CLMS::getCurrentTime() << " :: " << CLMS::getCurrentTime() << "\n";
-    //     i++;
-    // }
-
-    CLMS::UserComponent userComp = CLMS::UserComponent("");
+    CLMS::UserComponent userComp = CLMS::UserComponent();
+    for (std::string head : userComp.getHeaders()) {
+        std::cout << head << " ";
+    }
+    std::cout << "\n";
     userComp.getComponentInput();
+    std::string id;
+    std::cout << "Enter the ID : ";
+    std::cin >> id;
+    std::shared_ptr<void> userData = userComp.unpackData(id);
+    CLMS::UserComponent::User* usr = (CLMS::UserComponent::User*)userData.get();
+    std::cout << "User " << usr->print() << "\n";
     return 0;
 }

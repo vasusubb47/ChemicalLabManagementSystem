@@ -9,22 +9,23 @@ namespace CLMS {
     class Component {
         protected:
 
-            std::string componentName, componentFileName;
-            std::map<std::string, uint32_t> index;
+            std::string componentName;
+            std::unordered_map<std::string, uint32_t> index;
             std::fstream componentFile;
+            std::fstream componentIndexFile;
 
         public:
 
-            Component(const std::string& componentName, const std::string& componentFileName);
+            Component(const std::string& componentName);
             Component(const Component& component);
             ~Component();
 
-            std::string getPackedData(const std::string& componentId, char del);
-            void unpackData(const std::string& data);
-            void writeData(const std::string& packedData, uint16_t width, char fill);
+            std::string getPackedData(const void* data, const char del);
+            std::shared_ptr<void> unpackData(const std::string& data);
+            uint32_t writeData(const std::string& packedData, uint16_t width, char fill);
             void getComponentInput();
             std::vector<std::string> getHeaders();
-            std::vector<std::string> getData(const std::string& componentId);
+            std::string getData(const std::string& componentId);
 
     };
 
