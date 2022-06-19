@@ -8,7 +8,7 @@ namespace CLMS {
     class LogComponent : public Component {
         public:
 
-            LogComponent(const std::string& componentFileName);
+            LogComponent(std::string logName);
             ~LogComponent();
 
     };

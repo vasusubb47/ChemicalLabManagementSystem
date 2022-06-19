@@ -1,17 +1,17 @@
 
 #pragma once
 
-#include "component.hpp"
+#include "main.hpp"
 #include "util.hpp"
+#include "component.hpp"
+#include "logComponent.hpp"
 
 namespace CLMS {
-    class UserComponent : public Component {
-        private:
-
+    class UserLogComponent : public LogComponent {
         public:
 
-            UserComponent();
-            ~UserComponent();
+            UserLogComponent();
+            ~UserLogComponent();
 
             virtual std::string getPackedData(const void* data, const char del);
             virtual std::shared_ptr<void> unpackData(const std::string& data);
@@ -19,11 +19,12 @@ namespace CLMS {
             virtual std::vector<std::string> getHeaders();
             virtual std::string getData(const std::string& componentId);
 
-            struct User {
-                std::string Id, Name, Contact;
+            struct UserLog {
+                uint64_t timeStamp;
+                std::string Uid, state;
 
-                User(const User* user);
-                User(const std::string Id, const std::string name, const std::string contact);
+                UserLog(const uint64_t timeStamp, const std::string Uid, const std::string state);
+                UserLog(const UserLog* uLog);
                 std::string print();
             };
 

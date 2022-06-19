@@ -1,7 +1,7 @@
 
 #include "../lib/userComponent.hpp"
 
-CLMS::UserComponent::UserComponent() : Component("UserComponent") {
+CLMS::UserComponent::UserComponent() : Component("UserComponent", ComponentType::DataComponent) {
     std::cout << "UserComponent\n";
     std::string data;
     this->componentIndexFile >> data;
@@ -13,7 +13,7 @@ CLMS::UserComponent::~UserComponent(){}
 
 void CLMS::UserComponent::getComponentInput() {
     std::string Id, Name, Contact;
-    std::cout << "Get Component Data: ";
+    std::cout << "Enter User Information : ";
     std::cin >> Id >> Name >> Contact;
     User user = User(
         Id, Name, Contact
@@ -31,7 +31,7 @@ std::string CLMS::UserComponent::getPackedData(const void* data, const char del)
 
 std::shared_ptr<void> CLMS::UserComponent::unpackData(const std::string& componentId) {
     std::string compData = this->getData(componentId);
-    if (compData == "") {
+    if (compData.empty()) {
         return std::make_shared<std::nullptr_t>(nullptr);
     }
     std::string Id, Name, Contact;

@@ -7,16 +7,22 @@
 namespace CLMS {
 
     class Component {
+        public:
+            enum ComponentType {
+                DataComponent, LogComponent
+            };
+
         protected:
 
             std::string componentName;
+            ComponentType componentType;
             std::unordered_map<std::string, uint32_t> index;
             std::fstream componentFile;
             std::fstream componentIndexFile;
 
         public:
 
-            Component(const std::string& componentName);
+            Component(const std::string& componentName, const ComponentType);
             Component(const Component& component);
             ~Component();
 

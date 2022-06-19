@@ -1,20 +1,32 @@
 
 #include "../lib/component.hpp"
 
-CLMS::Component::Component(const std::string& componentName) {
+CLMS::Component::Component(const std::string& componentName, ComponentType componentType) {
     this->componentName = componentName;
+    this->componentType = componentType;
     this->index = std::unordered_map<std::string, uint32_t>();
 
-    this->componentFile.open(this->componentName + ".dat", std::ios::in | std::ios::app);
-    this->componentIndexFile.open(this->componentName + ".ind", std::ios::in);
+    if (this->componentType == CLMS::Component::ComponentType::DataComponent) {
+        this->componentFile.open(this->componentName + ".dat", std::ios::in | std::ios::app);
+        this->componentIndexFile.open(this->componentName + ".ind", std::ios::in);
+    }else {
+        this->componentIndexFile.open(this->componentName + ".log", std::ios::in | std::ios::app);
+        this->componentIndexFile.open(this->componentName + ".ledg", std::ios::in);
+    }
 }
 
 CLMS::Component::Component(const CLMS::Component& component) {
     this->componentName = component.componentName;
+    this->componentType = component.componentType;
     this->index = std::unordered_map<std::string, uint32_t>();
 
-    this->componentFile.open(this->componentName + ".dat", std::ios::in | std::ios::app);
-    this->componentIndexFile.open(this->componentName + ".ind", std::ios::in);
+    if (this->componentType == CLMS::Component::ComponentType::DataComponent) {
+        this->componentFile.open(this->componentName + ".dat", std::ios::in | std::ios::app);
+        this->componentIndexFile.open(this->componentName + ".ind", std::ios::in);
+    }else {
+        this->componentIndexFile.open(this->componentName + ".log", std::ios::in | std::ios::app);
+        this->componentIndexFile.open(this->componentName + ".ledg", std::ios::in);
+    }
 }
 
 CLMS::Component::~Component() {
