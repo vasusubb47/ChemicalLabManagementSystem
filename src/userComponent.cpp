@@ -6,6 +6,21 @@ CLMS::UserComponent::UserComponent() : Component("UserComponent", ComponentType:
     std::string data;
     this->componentIndexFile >> data;
     std::cout << data << "\n";
+    std::string delimiter = "#";
+    size_t pos = 0;
+    std::string temp_str;
+    std::string length = data.substr(1, 5);
+    this->index = std::unordered_map<std::string, uint32_t>(std::atoi(length.c_str()));
+    data.erase(0, 6);
+    while((pos = data.find(delimiter)) != std::string::npos){
+        temp_str = data.substr(0, pos);
+        this->index.insert({temp_str.substr(temp_str.find('%')+1,6), std::atoi(temp_str.substr(temp_str.find(':')+1).c_str())});
+        //std::cout << temp_str.substr(temp_str.find('%')+1,6) << "," << temp_str.substr(temp_str.find(':')+1) << "\n";
+        data.erase(0, pos + delimiter.length());
+    }
+    for(auto i = this->index.begin() ; i != this->index.end() ; i++){
+        std::cout << i->first << ", " << i->second << "\n";
+    }
     this->componentIndexFile.close();
     this->componentIndexFile.open(this->componentName + ".ind", std::ios::app);
 }
@@ -35,6 +50,10 @@ std::shared_ptr<void> CLMS::UserComponent::unpackData(const std::string& compone
         return std::make_shared<std::nullptr_t>(nullptr);
     }
     std::string Id, Name, Contact;
+    ///////
+
+    ///////
+    
     return std::make_shared<User>(new User(Id, Name, Contact));
 }
 
