@@ -54,3 +54,13 @@ CLMS::UserLogComponent::UserLog::UserLog(const uint64_t timeStamp, const std::st
     this->Uid = Uid;
     this->state = state;
 }
+
+CLMS::UserLogComponent::UserLog::UserLog(const UserLog* uLog) {
+    this->timeStamp = uLog->timeStamp;
+    this->Uid = uLog->Uid;
+    this->state = uLog->state;
+}
+
+std::string CLMS::UserLogComponent::UserLog::print() {
+    return "{TimeStamp : " + std::to_string(this->timeStamp) + ", Uid : " + this->Uid + ", state : " + this->state + "}";
+}

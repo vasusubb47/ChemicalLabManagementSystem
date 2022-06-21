@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include <iomanip>
 #include <fstream>
 #include <string>
@@ -8,3 +9,5 @@
 #include <algorithm>
 #include <unordered_map>
 #include <memory>
+
+#define Dir "C:\\CLMS\\"
