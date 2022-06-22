@@ -49,9 +49,20 @@ std::shared_ptr<void> CLMS::UserComponent::unpackData(const std::string& compone
         return std::make_shared<std::nullptr_t>(nullptr);
     }
     std::string Id, Name, Contact;
-    ///////
-
-    ///////
+    std::string arr[3];
+    std::string delimiter = "|";
+    size_t pos = 0;
+    std::string temp_str;
+    int count = 0;
+    while((pos = compData.find(delimiter)) != std::string::npos){
+        temp_str = compData.substr(0, pos);
+        arr[count] = temp_str;
+        count++;
+        compData.erase(0, pos + delimiter.length());
+    }
+    Id = arr[1];
+    Name = arr[2];
+    Contact = arr[3];
     
     return std::make_shared<User>(new User(Id, Name, Contact));
 }
