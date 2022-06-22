@@ -28,7 +28,7 @@ namespace CLMS {
 
             std::string getPackedData(const void* data, const char del);
             std::shared_ptr<void> unpackData(const std::string& data);
-            uint32_t writeData(const std::string& packedData, uint16_t width, char fill);
+            uint32_t writeData(std::iostream& stream, const uint32_t biteOffSet, const std::string& packedData, uint16_t width, char fill);
             void getComponentInput();
             std::vector<std::string> getHeaders();
             std::string getData(const std::string& componentId);

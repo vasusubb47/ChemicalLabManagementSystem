@@ -13,6 +13,8 @@ namespace CLMS {
     };
 
     uint64_t getCurrentTime();
+
+    void openFile(std::fstream& file, const std::string fileName, const std::string extension, const std::string dirName, std::ios_base::openmode mode);
     
 }
 

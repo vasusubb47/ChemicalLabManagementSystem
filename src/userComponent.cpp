@@ -15,7 +15,6 @@ CLMS::UserComponent::UserComponent() : Component("UserComponent", ComponentType:
     while((pos = data.find(delimiter)) != std::string::npos){
         temp_str = data.substr(0, pos);
         this->index.insert({temp_str.substr(temp_str.find('%')+1,6), std::atoi(temp_str.substr(temp_str.find(':')+1).c_str())});
-        //std::cout << temp_str.substr(temp_str.find('%')+1,6) << "," << temp_str.substr(temp_str.find(':')+1) << "\n";
         data.erase(0, pos + delimiter.length());
     }
     for(auto i = this->index.begin() ; i != this->index.end() ; i++){
@@ -34,7 +33,7 @@ void CLMS::UserComponent::getComponentInput() {
         Id, Name, Contact
     );
     std::string packedData =  this->getPackedData(&user, '|');
-    uint32_t biteOffSet = this->writeData(packedData, 32, '*');
+    uint32_t biteOffSet = this->writeData(this->componentFile, 0, packedData, 32, '*');
     this->index.insert({Id, biteOffSet});
     this->componentIndexFile << "%" << Id << ":" << biteOffSet << "#";
 }

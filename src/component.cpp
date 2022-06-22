@@ -6,24 +6,24 @@ CLMS::Component::Component(const std::string& componentName, ComponentType compo
     this->componentType = componentType;
     
     if (this->componentType == CLMS::Component::ComponentType::DataComponent) {
-        this->componentFile.open(this->componentName + ".dat", std::ios::in | std::ios::app);
-        this->componentIndexFile.open(this->componentName + ".ind", std::ios::in);
+        openFile(this->componentFile, this->componentName, ".dat", "log\\user", std::ios::in | std::ios::app);
+        openFile(this->componentIndexFile, this->componentName, ".ind", "log\\user", std::ios::in | std::ios::app);
     }else {
-        this->componentIndexFile.open(this->componentName + ".log", std::ios::in | std::ios::app);
-        this->componentIndexFile.open(this->componentName + ".ledg", std::ios::in);
+        openFile(this->componentFile, this->componentName, ".log", "log\\user", std::ios::in | std::ios::app);
+        openFile(this->componentIndexFile, this->componentName, ".ledg", "log\\user", std::ios::in | std::ios::app);
     }
 }
 
 CLMS::Component::Component(const CLMS::Component& component) {
     this->componentName = component.componentName;
     this->componentType = component.componentType;
-
+    
     if (this->componentType == CLMS::Component::ComponentType::DataComponent) {
-        this->componentFile.open(this->componentName + ".dat", std::ios::in | std::ios::app);
-        this->componentIndexFile.open(this->componentName + ".ind", std::ios::in);
+        openFile(this->componentFile, this->componentName, ".dat", "log\\user", std::ios::in | std::ios::app);
+        openFile(this->componentIndexFile, this->componentName, ".ind", "log\\user", std::ios::in | std::ios::app);
     }else {
-        this->componentIndexFile.open(this->componentName + ".log", std::ios::in | std::ios::app);
-        this->componentIndexFile.open(this->componentName + ".ledg", std::ios::in);
+        openFile(this->componentFile, this->componentName, ".log", "log\\user", std::ios::in | std::ios::app);
+        openFile(this->componentIndexFile, this->componentName, ".ledg", "log\\user", std::ios::in | std::ios::app);
     }
 }
 
@@ -32,8 +32,10 @@ CLMS::Component::~Component() {
     this->componentIndexFile.close();
 }
 
-uint32_t CLMS::Component::writeData(const std::string& packedData, uint16_t width,char fill) {
-    this->componentFile << std::setw(width) << std::setfill(fill) << std::setiosflags(std::ios_base::left) << packedData << "\n";
-    this->componentFile.flush();
-    return ((uint32_t)this->componentFile.tellg() - width - 2);
+uint32_t CLMS::Component::writeData(std::iostream& stream, const uint32_t biteOffSet, const std::string& packedData, uint16_t width,char fill) {
+    if(biteOffSet != -1) {
+        stream.seekg(biteOffSet);
+    }
+    stream << std::setw(width) << std::setfill(fill) << std::setiosflags(std::ios_base::left) << packedData << "\n";
+    return ((uint32_t)stream.tellg() - width - 2);
 }
