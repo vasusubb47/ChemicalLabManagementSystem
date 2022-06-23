@@ -98,6 +98,9 @@ void CLMS::Component::loadIndex() {
         for(auto i = this->index.begin() ; i != this->index.end() ; i++){
             std::cout << i->first << ", " << i->second << "\n";
         }
+    }else {
+        this->open(ComponentFileType::IndexFile, std::ios::out);
+        this->componentIndexFile << "%0000#";
     }
 }
 
@@ -119,8 +122,10 @@ void CLMS::Component::writeDataAndUpdateIndex(const std::string& PackedData, con
     }else {
         this->open(ComponentFileType::LogIndexFile, std::ios::app);
     }
+    this->index.insert({id, biteOffSet});
     this->componentIndexFile << "%" << id << ":" << biteOffSet << "#";
-    std::cout << "%" << id << ":" << biteOffSet << "#\n";
+    // this->componentIndexFile.seekg(std::ios::beg);
+    // (std::ostream&)(this->componentIndexFile.seekg(std::ios::beg)) << "%" << std::setw(4) << std::setfill('0') << this->index.size() << "#";
     this->componentFile.flush();
     this->componentIndexFile.flush();
 }
