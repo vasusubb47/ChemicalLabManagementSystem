@@ -15,7 +15,7 @@ void CLMS::UserLogComponent::getComponentInput() {
         timeStamp, Uid, state
     );
     std::string packedData = this->getPackedData(&uLog, '|');
-    uint32_t biteOffSet = this->writeData(packedData, 32, '*');
+    uint32_t biteOffSet = this->writeData(this->componentIndexFile, -1,packedData, 32, '*');
     this->index.insert({std::to_string(timeStamp), biteOffSet});
     this->componentIndexFile << "%" << timeStamp << ":" << biteOffSet << "#";
 }

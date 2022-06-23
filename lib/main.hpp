@@ -13,4 +13,4 @@
 
 #define Dir "C:\\CLMS\\"
 
-// clang main.cpp userComponent.cpp util.cpp component.cpp fileSave.cpp -o ..\bin\main.exe -std=c++17
+// clang *.cpp -o ..\bin\main.exe -std=c++17
