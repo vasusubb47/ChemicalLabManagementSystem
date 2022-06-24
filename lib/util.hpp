@@ -12,10 +12,19 @@ namespace CLMS {
         INT, STRING
     };
 
+    enum ComponentType {
+        DataComponent, LogComponent
+    };
+
+    enum FileType{
+        DataFile, IndexFile, LogFile, LogIndexFile, IndexKeyFile, IndexValueFile, CSV, TSV, JSON
+    };
+
     uint64_t getCurrentTime();
 
-    void openFile(std::fstream& file, const std::string fileName, const std::string extension, const std::string dirName, std::ios_base::openmode mode);
-    
+    void openFile(std::fstream& file, std::string filePath, std::ios_base::openmode mode);
+    std::string getFilePath(std::string filename, std::vector<std::string> dirChain, FileType fileType);
+
 }
 
 #endif

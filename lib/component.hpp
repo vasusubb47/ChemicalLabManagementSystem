@@ -7,15 +7,6 @@
 namespace CLMS {
 
     class Component {
-        public:
-            enum ComponentType {
-                DataComponent, LogComponent
-            };
-
-            enum ComponentFileType{
-                DataFile, IndexFile, LogFile, LogIndexFile
-            };
-
         protected:
 
             std::string componentName;
@@ -31,8 +22,7 @@ namespace CLMS {
             Component(const std::string& componentName, const ComponentType, std::vector<std::string> dirChain);
             Component(const Component& component);
             ~Component();
-
-            void open(ComponentFileType openFileType, std::ios_base::openmode mode);
+            
             std::string getPackedData(const void* data, const char del);
             std::shared_ptr<void> unpackData(const std::string id);
             std::vector<std::string> extractData(const std::string id);
@@ -41,6 +31,8 @@ namespace CLMS {
             uint32_t writeData(std::iostream& stream, const uint32_t biteOffSet, const std::string& packedData, uint16_t width, char fill);
             void getComponentInput();
             std::vector<std::string> getHeaders();
+
+            void saveAs() {}
 
     };
 
