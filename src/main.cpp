@@ -54,6 +54,7 @@ int main(int argc, char** argv) {
                 for (std::string usrD : data) {
                     std::cout << usrD << ", ";
                 }
+                std::cout << std::endl;
                 option = 0;
             }; break;
         }

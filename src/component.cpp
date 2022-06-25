@@ -29,7 +29,13 @@ uint32_t CLMS::Component::writeData(std::iostream& stream, const uint32_t biteOf
 }
 
 std::vector<std::string> CLMS::Component::extractData(const std::string id){
-    openFile(this->componentFile, getFilePath(this->componentName, this->dirChain, FileType::DataFile), std::ios::in);
+    FileType fileType;
+    if (this->componentType == ComponentType::DataComponent) {
+        fileType = FileType::DataFile;
+    }else if (this->componentType == ComponentType::LogComponent) {
+        fileType = FileType::LogFile;
+    }
+    openFile(this->componentFile, getFilePath(this->componentName, this->dirChain, fileType), std::ios::in);
     std::string line = "";
     auto val = this->index.find(id);
     if (val != this->index.end()) {
@@ -74,7 +80,11 @@ void CLMS::Component::loadIndex() {
         data.erase(0, 6);
         while((pos = data.find(delimiter)) != std::string::npos){
             temp_str = data.substr(0, pos);
-            this->index.insert({temp_str.substr(temp_str.find('%')+1,6), std::atoi(temp_str.substr(temp_str.find(':')+1).c_str())});
+            size_t perDel = temp_str.find('%'), colDel = temp_str.find(':');
+            this->index.insert({
+                temp_str.substr(perDel + 1, colDel - 1),
+                std::atoi(temp_str.substr(colDel + 1).c_str())
+            });
             data.erase(0, pos + delimiter.length());
         }
         for(auto i = this->index.begin() ; i != this->index.end() ; i++){
