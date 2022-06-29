@@ -1,9 +1,16 @@
 
-#include "../lib/userLogComponent.hpp";
+#include "../lib/userLogComponent.hpp"
 
-CLMS::UserLogComponent::UserLogComponent() : LogComponent("UserLog") {}
+CLMS::UserLogComponent::UserLogComponent() : LogComponent("UserLog", {"log", "user"}) {
+    std::cout << "UserLogComponent\n";
+    openFile(this->componentKeyIndexFile, getFilePath(this->componentName, this->dirChain, FileType::IndexKeyFile), std::ios::in);
+    openFile(this->componentValueIndexFile, getFilePath(this->componentName, this->dirChain, FileType::IndexValueFile), std::ios::in);
+}
 
-CLMS::UserLogComponent::~UserLogComponent() {}
+CLMS::UserLogComponent::~UserLogComponent() {
+    this->componentKeyIndexFile.close();
+    this->componentValueIndexFile.close();
+}
 
 void CLMS::UserLogComponent::getComponentInput() {
     std::string Uid, state;
@@ -15,9 +22,7 @@ void CLMS::UserLogComponent::getComponentInput() {
         timeStamp, Uid, state
     );
     std::string packedData = this->getPackedData(&uLog, '|');
-    uint32_t biteOffSet = this->writeData(this->componentIndexFile, -1,packedData, 32, '*');
-    this->index.insert({std::to_string(timeStamp), biteOffSet});
-    this->componentIndexFile << "%" << timeStamp << ":" << biteOffSet << "#";
+    this->writeDataAndUpdateIndex(packedData, std::to_string(timeStamp), 64);
 }
 
 std::string CLMS::UserLogComponent::getPackedData(const void* data, const char del) {
@@ -26,27 +31,16 @@ std::string CLMS::UserLogComponent::getPackedData(const void* data, const char d
 }
 
 std::shared_ptr<void> CLMS::UserLogComponent::unpackData(const std::string& timeStamp) {
-    std::string logData = this->getData(timeStamp);
-    if (logData.empty()) {
+    std::vector<std::string> logData = this->extractData(timeStamp);
+    if (logData.size() == 0) {
         return std::make_shared<std::nullptr_t>(nullptr);
     }
     std::string Uid, state;
-    return std::make_shared<UserLog>(new UserLog(std::atoi(timeStamp.c_str()), Uid, state));
+    return std::make_shared<UserLog>(new UserLog(logData));
 }
 
 std::vector<std::string> CLMS::UserLogComponent::getHeaders() {
     return {"timeStamp", "Uid", "state"};
-}
-
-std::string CLMS::UserLogComponent::getData(const std::string& timeStamp) {
-    auto val = this->index.find(timeStamp);
-    if (val != this->index.end()) {
-        this->componentFile.seekg(val->second);
-        std::string line;
-        this->componentFile >> line;
-        return line;
-    }
-    return "";
 }
 
 CLMS::UserLogComponent::UserLog::UserLog(const uint64_t timeStamp, const std::string Uid, const std::string state) {
@@ -59,6 +53,12 @@ CLMS::UserLogComponent::UserLog::UserLog(const UserLog* uLog) {
     this->timeStamp = uLog->timeStamp;
     this->Uid = uLog->Uid;
     this->state = uLog->state;
+}
+
+CLMS::UserLogComponent::UserLog::UserLog(std::vector<std::string> data) {
+    this->timeStamp = std::atoi(data[0].c_str());
+    this->Uid = data[1];
+    this->state = data[2];
 }
 
 std::string CLMS::UserLogComponent::UserLog::print() {

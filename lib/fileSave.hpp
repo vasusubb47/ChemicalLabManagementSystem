@@ -6,12 +6,6 @@
 
 namespace CLMS {
     class FileSave {
-        public:
-
-            enum FileType {
-                CSV, TSV, JSON
-            };
-
         private:
 
             FileType fileType;

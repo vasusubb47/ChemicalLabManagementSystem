@@ -5,12 +5,14 @@ CLMS::Component::Component(const std::string& componentName, ComponentType compo
     this->componentName = componentName;
     this->componentType = componentType;
     this->dirChain = dirChain;
+    std::cout << "Component: " << componentName << "\n";
 }
 
 CLMS::Component::Component(const CLMS::Component& component) {
     this->componentName = component.componentName;
     this->componentType = component.componentType;
     this->dirChain = component.dirChain;
+    std::cout << "Component (ref): " << componentName << "\n";
 }
 
 CLMS::Component::~Component() {
@@ -26,34 +28,14 @@ uint32_t CLMS::Component::writeData(std::iostream& stream, const uint32_t biteOf
     return ((uint32_t)stream.tellg() - width - 2);
 }
 
-void CLMS::Component::open(CLMS::Component::ComponentFileType openFileType, std::ios_base::openmode mode){
-    std::string path = std::string(Dir);
-    for (std::string dir : this->dirChain) {
-        path += dir + "\\";
-    }
-    std::string ext;
-    switch (openFileType) {
-        case ComponentFileType::DataFile : ext = ".dat"; break;
-        case ComponentFileType::IndexFile : ext = ".ind"; break;
-        case ComponentFileType::LogFile : ext = ".log"; break;
-        case ComponentFileType::LogIndexFile : ext = ".ind"; break;
-    }
-    std::cout << "Opening the file : " << path << this->componentName << ext << std::endl;
-    if (openFileType == ComponentFileType::DataFile || openFileType == ComponentFileType::LogFile) {
-        if (this->componentFile.is_open()) {
-            this->componentFile.close();
-        }
-        this->componentFile.open(path+this->componentName+ext, mode);
-    }else if (openFileType == ComponentFileType::IndexFile || openFileType == ComponentFileType::LogIndexFile) {
-        if (this->componentIndexFile.is_open()) {
-            this->componentIndexFile.close();
-        }
-        this->componentIndexFile.open(path+this->componentName+ext, mode);
-    }
-}
-
 std::vector<std::string> CLMS::Component::extractData(const std::string id){
-    open(ComponentFileType::DataFile, std::ios::in);
+    FileType fileType;
+    if (this->componentType == ComponentType::DataComponent) {
+        fileType = FileType::DataFile;
+    }else if (this->componentType == ComponentType::LogComponent) {
+        fileType = FileType::LogFile;
+    }
+    openFile(this->componentFile, getFilePath(this->componentName, this->dirChain, fileType), std::ios::in);
     std::string line = "";
     auto val = this->index.find(id);
     if (val != this->index.end()) {
@@ -79,7 +61,13 @@ std::vector<std::string> CLMS::Component::extractData(const std::string id){
 }
 
 void CLMS::Component::loadIndex() {
-    this->open(ComponentFileType::IndexFile, std::ios::in);
+    FileType fileType;
+    if (this->componentType == ComponentType::DataComponent) {
+        fileType = FileType::IndexFile;
+    }else {
+        fileType = FileType::LogIndexFile;
+    }
+    openFile(this->componentIndexFile, getFilePath(this->componentName, this->dirChain, fileType), std::ios::in);
     std::string data = "";
     this->componentIndexFile >> data;
     if (data.size() > 0) {
@@ -92,23 +80,27 @@ void CLMS::Component::loadIndex() {
         data.erase(0, 6);
         while((pos = data.find(delimiter)) != std::string::npos){
             temp_str = data.substr(0, pos);
-            this->index.insert({temp_str.substr(temp_str.find('%')+1,6), std::atoi(temp_str.substr(temp_str.find(':')+1).c_str())});
+            size_t perDel = temp_str.find('%'), colDel = temp_str.find(':');
+            this->index.insert({
+                temp_str.substr(perDel + 1, colDel - 1),
+                std::atoi(temp_str.substr(colDel + 1).c_str())
+            });
             data.erase(0, pos + delimiter.length());
         }
         for(auto i = this->index.begin() ; i != this->index.end() ; i++){
             std::cout << i->first << ", " << i->second << "\n";
         }
     }else {
-        this->open(ComponentFileType::IndexFile, std::ios::out);
+        openFile(this->componentIndexFile, getFilePath(this->componentName, this->dirChain, fileType), std::ios::out);
         this->componentIndexFile << "%0000#";
     }
 }
 
 void CLMS::Component::writeDataAndUpdateIndex(const std::string& PackedData, const std::string id, const uint16_t width) {
     if (this->componentType == ComponentType::DataComponent) {
-        this->open(ComponentFileType::DataFile, std::ios::app);
+        openFile(this->componentFile, getFilePath(this->componentName, this->dirChain, FileType::DataFile), std::ios::app);
     }else {
-        this->open(ComponentFileType::LogFile, std::ios::app);
+        openFile(this->componentFile, getFilePath(this->componentName, this->dirChain, FileType::LogFile), std::ios::app);
     }
     uint32_t biteOffSet = this->writeData(
         this->componentFile,
@@ -118,14 +110,10 @@ void CLMS::Component::writeDataAndUpdateIndex(const std::string& PackedData, con
         '*'
     );
     if (this->componentType == ComponentType::DataComponent) {
-        this->open(ComponentFileType::IndexFile, std::ios::app);
+        openFile(this->componentIndexFile, getFilePath(this->componentName, this->dirChain, FileType::IndexFile), std::ios::app);
     }else {
-        this->open(ComponentFileType::LogIndexFile, std::ios::app);
+        openFile(this->componentIndexFile, getFilePath(this->componentName, this->dirChain, FileType::LogIndexFile), std::ios::app);
     }
     this->index.insert({id, biteOffSet});
     this->componentIndexFile << "%" << id << ":" << biteOffSet << "#";
-    // this->componentIndexFile.seekg(std::ios::beg);
-    // (std::ostream&)(this->componentIndexFile.seekg(std::ios::beg)) << "%" << std::setw(4) << std::setfill('0') << this->index.size() << "#";
-    this->componentFile.flush();
-    this->componentIndexFile.flush();
 }

@@ -4,6 +4,8 @@
 #include "../lib/component.hpp"
 #include "../lib/userComponent.hpp"
 #include "../lib/fileSave.hpp"
+#include "../lib/logComponent.hpp"
+#include "../lib/userLogComponent.hpp"
 
 using namespace CLMS;
 
@@ -22,25 +24,38 @@ int main(int argc, char** argv) {
     int option;
     const int quit = 4;
     UserComponent userComp = UserComponent();
+    UserLogComponent userLogComp = UserLogComponent();
     do {
         std::cout << "1> Insert Data, 2> View Data, 4> Quit\n";
         std::cin >> option;
         switch (option) {
             case 1: {
-                userComp.getComponentInput();
+                std::cout << "1> User 2> userLog\n";
+                std::cin >> option;
+                if (option == 1) {
+                    userComp.getComponentInput();
+                }else if (option == 2) {
+                    userLogComp.getComponentInput();
+                }
+                option = 0;
             }; break;
             case 2: {
+                std::cout << "1> User 2> userLog\n";
+                std::cin >> option;
+                std::vector<std::string> data;
                 std::string uid;
                 std::cout << "Enter the Uid : " ;
                 std::cin >> uid;
-                std::vector<std::string> data = userComp.extractData(uid);
+                if (option == 1) {
+                    data = userComp.extractData(uid);
+                }else if (option == 2) {
+                    data = userLogComp.extractData(uid);
+                }
                 for (std::string usrD : data) {
                     std::cout << usrD << ", ";
                 }
                 std::cout << std::endl;
-                // std::shared_ptr<void> data = userComp.unpackData(uid);
-                // UserComponent::User* user = (UserComponent::User*)data.get();
-                // std::cout << "user : " << user->print() << std::endl;
+                option = 0;
             }; break;
         }
     } while (option != quit);
