@@ -26,7 +26,7 @@ std::string CLMS::UserComponent::getPackedData(const void* data, const char del)
 std::shared_ptr<void> CLMS::UserComponent::unpackData(const std::string componentId) {
     std::vector<std::string> compData = this->extractData(componentId);
     if (compData.size() == 0) {
-        return std::make_shared<nullptr_t>(nullptr);
+        return std::make_shared<std::nullptr_t>(nullptr);
     }
     return std::make_shared<User>(new User(compData));
 }

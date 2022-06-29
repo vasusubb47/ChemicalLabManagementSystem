@@ -4,7 +4,7 @@
 #include "util.hpp"
 
 namespace CLMS {
-    class chemicalComponent : public Component {
+    class ChemicalComponent : public Component {
         private:
 
         public:
@@ -16,13 +16,13 @@ namespace CLMS {
             virtual std::shared_ptr<void> unpackData(const std::string& data);
             virtual void getComponentInput();
             virtual std::vector<std::string> getHeaders();
-            virtual std::string getData(const std::string& componentId);
 
             struct Chemical {
-                std::string CId, Chemical_Name, Quantity;
+                std::string Cid, Chemical_Name, Quantity;
 
-                Chemical(const User* user);
-                Chemival(const std::string CId, const std::string Chemical_Name, const std::string Quantity);
+                Chemical(const Chemical* chemical);
+                Chemical(const std::string Cid, const std::string Chemical_Name, const std::string Quantity);
+                Chemical(std::vector<std::string> data);
                 std::string print();
             };
 
