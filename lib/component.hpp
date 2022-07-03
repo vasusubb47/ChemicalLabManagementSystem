@@ -27,7 +27,7 @@ namespace CLMS {
             std::shared_ptr<void> unpackData(const std::string id);
             std::vector<std::string> extractData(const std::string id);
             void loadIndex();
-            void writeDataAndUpdateIndex(const std::string& PackedData, const std::string id, const uint16_t width);
+            uint32_t writeDataAndUpdateIndex(const std::string& PackedData, const std::string id, const uint16_t width);
             uint32_t writeData(std::iostream& stream, const uint32_t biteOffSet, const std::string& packedData, uint16_t width, char fill);
             void getComponentInput();
             std::vector<std::string> getHeaders();

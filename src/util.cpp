@@ -10,7 +10,7 @@ void CLMS::openFile(std::fstream& file, std::string filePath, std::ios_base::ope
     if (file.is_open()) {
         file.close();
     }
-    std::cout << "opening the file : " << filePath << "\n";
+    // std::cout << "opening the file : " << filePath << "\n";
     file.open(filePath, mode);
 }
 

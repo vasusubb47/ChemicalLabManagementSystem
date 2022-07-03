@@ -12,7 +12,8 @@ namespace CLMS {
 
             std::unordered_map<std::string, Key> userKeyMap;
             std::vector<Value> userValueVect;
-            std::fstream componentKeyIndexFile, componentValueIndexFile;
+            std::fstream UserKeyIndexFile, UserValueIndexFile;
+            std::vector<std::string> logedInUsers;
 
         public:
 
@@ -23,6 +24,8 @@ namespace CLMS {
             virtual std::shared_ptr<void> unpackData(const std::string& data);
             virtual void getComponentInput();
             virtual std::vector<std::string> getHeaders();
+            int userLogin(std::string uid);
+            int userLogout(std::string uid);
 
             struct UserLog {
                 uint64_t timeStamp;

@@ -3,13 +3,19 @@
 
 CLMS::UserLogComponent::UserLogComponent() : LogComponent("UserLog", {"log", "user"}) {
     std::cout << "UserLogComponent\n";
-    openFile(this->componentKeyIndexFile, getFilePath(this->componentName, this->dirChain, FileType::IndexKeyFile), std::ios::in);
-    openFile(this->componentValueIndexFile, getFilePath(this->componentName, this->dirChain, FileType::IndexValueFile), std::ios::in);
+    openFile(this->UserKeyIndexFile, getFilePath("User", this->dirChain, FileType::IndexKeyFile), std::ios::in);
+    openFile(this->UserValueIndexFile, getFilePath("User", this->dirChain, FileType::IndexValueFile), std::ios::in);
+    loadKeyValueIndexFile(this->UserKeyIndexFile, this->UserValueIndexFile, this->userKeyMap, this->userValueVect);
+    this->UserKeyIndexFile.close();
+    this->UserValueIndexFile.close();
 }
 
 CLMS::UserLogComponent::~UserLogComponent() {
-    this->componentKeyIndexFile.close();
-    this->componentValueIndexFile.close();
+    openFile(this->UserKeyIndexFile, getFilePath("User", this->dirChain, FileType::IndexKeyFile), std::ios::out);
+    openFile(this->UserValueIndexFile, getFilePath("User", this->dirChain, FileType::IndexValueFile), std::ios::out);
+    saveKeyValueIndexFile(this->UserKeyIndexFile, this->UserValueIndexFile, this->userKeyMap, this->userValueVect);
+    this->UserKeyIndexFile.close();
+    this->UserValueIndexFile.close();
 }
 
 void CLMS::UserLogComponent::getComponentInput() {
@@ -22,7 +28,18 @@ void CLMS::UserLogComponent::getComponentInput() {
         timeStamp, Uid, state
     );
     std::string packedData = this->getPackedData(&uLog, '|');
-    this->writeDataAndUpdateIndex(packedData, std::to_string(timeStamp), 64);
+    std::cout << "state : " << state << "\n";
+    if (state == "Login") {
+        if (this->userLogin(Uid)) {
+            uint32_t biteOffSet = this->writeDataAndUpdateIndex(packedData, std::to_string(timeStamp), 64);
+            this->updateKeyValue(this->userKeyMap, this->userValueVect, Uid, timeStamp, biteOffSet);
+        }
+    }else if(state == "Logout") {
+        if (this->userLogout(Uid)) {
+            uint32_t biteOffSet = this->writeDataAndUpdateIndex(packedData, std::to_string(timeStamp), 64);
+            this->updateKeyValue(this->userKeyMap, this->userValueVect, Uid, timeStamp, biteOffSet);
+        }
+    }
 }
 
 std::string CLMS::UserLogComponent::getPackedData(const void* data, const char del) {
@@ -63,4 +80,28 @@ CLMS::UserLogComponent::UserLog::UserLog(std::vector<std::string> data) {
 
 std::string CLMS::UserLogComponent::UserLog::print() {
     return "{TimeStamp : " + std::to_string(this->timeStamp) + ", Uid : " + this->Uid + ", state : " + this->state + "}";
+}
+
+int CLMS::UserLogComponent::userLogin(std::string Uid) {
+    auto itr = std::find(this->logedInUsers.begin(), this->logedInUsers.end(), Uid);
+    if (itr == this->logedInUsers.end()) {
+        this->logedInUsers.emplace_back(Uid);
+        std::cout << "The User " << Uid << " has been logged in successfully\n";
+        return 1;
+    }else {
+        std::cout << "The User " << Uid << " has been logged in allready\n";
+        return 0;
+    }
+}
+
+int CLMS::UserLogComponent::userLogout(std::string Uid) {
+    auto itr = std::find(this->logedInUsers.begin(), this->logedInUsers.end(), Uid);
+    if (itr == this->logedInUsers.end()) {
+        std::cout << "The User " << Uid << " has been logged out allready\n";
+        return 0;
+    }else {
+        this->logedInUsers.erase(itr);
+        std::cout << "The User " << Uid << " has been logged out successfully\n";
+        return 1;
+    }
 }

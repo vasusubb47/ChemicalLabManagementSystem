@@ -96,7 +96,7 @@ void CLMS::Component::loadIndex() {
     }
 }
 
-void CLMS::Component::writeDataAndUpdateIndex(const std::string& PackedData, const std::string id, const uint16_t width) {
+uint32_t CLMS::Component::writeDataAndUpdateIndex(const std::string& PackedData, const std::string id, const uint16_t width) {
     if (this->componentType == ComponentType::DataComponent) {
         openFile(this->componentFile, getFilePath(this->componentName, this->dirChain, FileType::DataFile), std::ios::app);
     }else {
@@ -116,4 +116,5 @@ void CLMS::Component::writeDataAndUpdateIndex(const std::string& PackedData, con
     }
     this->index.insert({id, biteOffSet});
     this->componentIndexFile << "%" << id << ":" << biteOffSet << "#";
+    return biteOffSet;
 }
