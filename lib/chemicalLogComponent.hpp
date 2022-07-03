@@ -8,6 +8,11 @@
 
 namespace CLMS {
     class ChemicalLogComponent : public LogComponent {
+        protected:
+
+            std::unordered_map<std::string, Key> userKeyMap;
+            std::vector<Value> userValueVect;
+            std::fstream componentKeyIndexFile, componentValueIndexFile;
         public:
 
             ChemicalLogComponent();
@@ -17,7 +22,6 @@ namespace CLMS {
             virtual std::shared_ptr<void> unpackData(const std::string& data);
             virtual void getComponentInput();
             virtual std::vector<std::string> getHeaders();
-            virtual std::string getData(const std::string& componentId);
 
             struct ChemicalLog {
                 uint64_t timeStamp;
@@ -25,6 +29,7 @@ namespace CLMS {
 
                 ChemicalLog(const uint64_t timeStamp, const std::string Uid, const std::string Cid, const std::string Quantity, const std::string Action);
                 ChemicalLog(const ChemicalLog* cLog);
+                ChemicalLog(std::vector<std::string> data);
                 std::string print();
             };
 
