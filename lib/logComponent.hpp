@@ -11,6 +11,8 @@ namespace CLMS {
             LogComponent(std::string logName, std::vector<std::string> dirChain);
             ~LogComponent();
 
+            virtual std::vector<std::vector<std::string>> getData(std::vector<std::string> ids = {});
+
             struct Value {
                 uint64_t timestamp;
                 int32_t biteOffSet;

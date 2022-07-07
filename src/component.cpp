@@ -118,3 +118,20 @@ uint32_t CLMS::Component::writeDataAndUpdateIndex(const std::string& PackedData,
     this->componentIndexFile << "%" << id << ":" << biteOffSet << "#";
     return biteOffSet;
 }
+
+std::vector<std::vector<std::string>> CLMS::Component::getData(std::vector<std::string> ids) {
+    std::cout << "Parent : " << ids.size() << "\n";
+    std::vector<std::vector<std::string>> data;
+    if (ids.size() == 0) {
+        for (auto i : this->index) {
+            data.emplace_back(this->extractData(i.first));
+        }
+    }else {
+        for (std::string id : ids) {
+            if (this->index.find(id) != this->index.end()) {
+                data.emplace_back(this->extractData(id));
+            }
+        }
+    }
+    return data;
+}

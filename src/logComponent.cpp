@@ -146,6 +146,10 @@ void CLMS::LogComponent::updateKeyValue(std::unordered_map<std::string, Key>& Ke
     std::cout << "key : " << key << ", timeStamp : " << timeStamp << ", biteOffSet : " << biteOffSet << std::endl;
 }
 
+std::vector<std::vector<std::string>> CLMS::LogComponent::getData(std::vector<std::string> ids) {
+    return Component::getData(ids);
+}
+
 CLMS::LogComponent::Key::Key(std::string key, int32_t firstValueBiteOffset, int32_t firstTimeStampIndex) {
     this->key = key;
     this->firstValueBiteOffset = firstValueBiteOffset;

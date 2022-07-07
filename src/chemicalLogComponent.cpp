@@ -57,6 +57,31 @@ std::shared_ptr<void> CLMS::ChemicalLogComponent::unpackData(const std::string& 
     return std::make_shared<ChemicalLog>(new ChemicalLog(logData));
 }
 
+std::vector<std::vector<std::string>> CLMS::ChemicalLogComponent::getData(std::vector<std::string> ids) {
+    if (ids.size() == 0) {
+        return LogComponent::getData({});
+    }
+    std::vector<std::string> tsids = std::vector<std::string>();
+    for (auto id : ids) {
+        if (this->userKeyMap.find(id) != this->userKeyMap.end()) {
+            int tsi = this->userKeyMap.find(id)->second.firstTimeStampIndex;
+            while (tsi != -1) {
+                tsids.emplace_back(std::to_string(this->userValueVect[tsi].timestamp));
+                tsi = this->userValueVect[tsi].nextIndex;
+            }
+        }else if (this->chemicalKeyMap.find(id) != this->chemicalKeyMap.end()) {
+            int tsi = this->chemicalKeyMap.find(id)->second.firstTimeStampIndex;
+            while (tsi != -1) {
+                tsids.emplace_back(std::to_string(this->chemicalValueVect[tsi].timestamp));
+                tsi = this->chemicalValueVect[tsi].nextIndex;
+            }
+        } else {
+            tsids.emplace_back(id);
+        }
+    }
+    return LogComponent::getData(tsids);
+}
+
 std::vector<std::string> CLMS::ChemicalLogComponent::getHeaders() {
     return {"timeStamp", "Uid", "Cid", "Quantity", "Action"};
 }

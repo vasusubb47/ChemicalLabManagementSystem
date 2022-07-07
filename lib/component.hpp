@@ -32,6 +32,8 @@ namespace CLMS {
             void getComponentInput();
             std::vector<std::string> getHeaders();
 
+            std::vector<std::vector<std::string>> getData(std::vector<std::string> ids = {});
+
             void saveAs() {}
 
     };

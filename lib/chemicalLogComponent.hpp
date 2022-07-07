@@ -22,6 +22,7 @@ namespace CLMS {
             virtual std::shared_ptr<void> unpackData(const std::string& data);
             virtual void getComponentInput();
             virtual std::vector<std::string> getHeaders();
+            virtual std::vector<std::vector<std::string>> getData(std::vector<std::string> ids = {});
 
             struct ChemicalLog {
                 uint64_t timeStamp;

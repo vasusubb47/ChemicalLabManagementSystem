@@ -77,6 +77,25 @@ std::shared_ptr<void> CLMS::UserLogComponent::unpackData(const std::string& time
     return std::make_shared<UserLog>(new UserLog(logData));
 }
 
+std::vector<std::vector<std::string>> CLMS::UserLogComponent::getData(std::vector<std::string> ids) {
+    if (ids.size() == 0) {
+        return LogComponent::getData({});
+    }
+    std::vector<std::string> tsids = std::vector<std::string>();
+    for (auto id : ids) {
+        if (this->userKeyMap.find(id) != this->userKeyMap.end()) {
+            int tsi = this->userKeyMap.find(id)->second.firstTimeStampIndex;
+            while (tsi != -1) {
+                tsids.emplace_back(std::to_string(this->userValueVect[tsi].timestamp));
+                tsi = this->userValueVect[tsi].nextIndex;
+            }
+        }else {
+            tsids.emplace_back(id);
+        }
+    }
+    return LogComponent::getData(tsids);
+}
+
 std::vector<std::string> CLMS::UserLogComponent::getHeaders() {
     return {"timeStamp", "Uid", "state"};
 }

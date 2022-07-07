@@ -11,6 +11,17 @@
 
 using namespace CLMS;
 
+void print(std::vector<std::vector<std::string>>& data) {
+    std::cout << "Print\n";
+    for (auto vect : data) {
+        std::cout << "[";
+        for (auto d : vect) {
+            std::cout << d << ", ";
+        }
+        std::cout << "]\n";
+    }
+}
+
 int main(int argc, char** argv) {
     // creating all the folders required by the project
     // all the folders will be created at initial run of the project
@@ -30,9 +41,19 @@ int main(int argc, char** argv) {
     UserLogComponent userLogComp = UserLogComponent();
     ChemicalLogComponent chemicalLogComp = ChemicalLogComponent();
 
+    auto data = userComp.getData({"UID001"});
+    print(data);
+    data = chemicalComp.getData({"CID001"});
+    print(data);
+    data = userLogComp.getData({"UID001", "1657200661487576300"});
+    print(data);
+    data = chemicalLogComp.getData({"CID003", "UID002", "1657200731401042600"});
+    print(data);
+
     do {
         std::cout << "1> Insert Data, 2> View Data, 4> Quit\n";
         std::cin >> option;
+        // option = 4;
         switch (option) {
             case 1: {
                 std::cout << "1> User 2> userLog 3> Chemical 4> ChemicalLog\n";
