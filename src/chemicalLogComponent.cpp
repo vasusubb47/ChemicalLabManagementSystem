@@ -3,13 +3,29 @@
 
 CLMS::ChemicalLogComponent::ChemicalLogComponent() : LogComponent("ChemicalLog", {"log", "chemical"}) {
     std::cout << "ChemicalLogComponent\n";
-    openFile(this->componentKeyIndexFile, getFilePath(this->componentName, this->dirChain, FileType::IndexKeyFile), std::ios::in);
-    openFile(this->componentValueIndexFile, getFilePath(this->componentName, this->dirChain, FileType::IndexValueFile), std::ios::in);
+    openFile(this->UserKeyIndexFile, getFilePath("User", this->dirChain, FileType::IndexKeyFile), std::ios::in);
+    openFile(this->UserValueIndexFile, getFilePath("User", this->dirChain, FileType::IndexValueFile), std::ios::in);
+    loadKeyValueIndexFile(this->UserKeyIndexFile, this->UserValueIndexFile, this->userKeyMap, this->userValueVect);
+    this->UserKeyIndexFile.close();
+    this->UserValueIndexFile.close();
+    openFile(this->ChemicalKeyIndexFile, getFilePath("Chemical", this->dirChain, FileType::IndexKeyFile), std::ios::in);
+    openFile(this->ChemicalValueIndexFile, getFilePath("Chemical", this->dirChain, FileType::IndexValueFile), std::ios::in);
+    loadKeyValueIndexFile(this->ChemicalKeyIndexFile, this->ChemicalValueIndexFile, this->chemicalKeyMap, this->chemicalValueVect);
+    this->ChemicalKeyIndexFile.close();
+    this->ChemicalValueIndexFile.close();
 }
 
 CLMS::ChemicalLogComponent::~ChemicalLogComponent() {
-    this->componentKeyIndexFile.close();
-    this->componentValueIndexFile.close();
+    openFile(this->UserKeyIndexFile, getFilePath("User", this->dirChain, FileType::IndexKeyFile), std::ios::out);
+    openFile(this->UserValueIndexFile, getFilePath("User", this->dirChain, FileType::IndexValueFile), std::ios::out);
+    saveKeyValueIndexFile(this->UserKeyIndexFile, this->UserValueIndexFile, this->userKeyMap, this->userValueVect);
+    this->UserKeyIndexFile.close();
+    this->UserValueIndexFile.close();
+    openFile(this->ChemicalKeyIndexFile, getFilePath("Chemical", this->dirChain, FileType::IndexKeyFile), std::ios::out);
+    openFile(this->ChemicalValueIndexFile, getFilePath("Chemical", this->dirChain, FileType::IndexValueFile), std::ios::out);
+    saveKeyValueIndexFile(this->ChemicalKeyIndexFile, this->ChemicalValueIndexFile, this->chemicalKeyMap, this->chemicalValueVect);
+    this->ChemicalKeyIndexFile.close();
+    this->ChemicalValueIndexFile.close();
 }
 
 void CLMS::ChemicalLogComponent::getComponentInput() {
@@ -22,7 +38,9 @@ void CLMS::ChemicalLogComponent::getComponentInput() {
         timeStamp, Uid, Cid, Quantity, Action
     );
     std::string packedData = this->getPackedData(&cLog, '|');
-    this->writeDataAndUpdateIndex(packedData, std::to_string(timeStamp), 64);
+    uint32_t biteOffSet = this->writeDataAndUpdateIndex(packedData, std::to_string(timeStamp), 64);
+    this->updateKeyValue(this->userKeyMap, this->userValueVect, Uid, timeStamp, biteOffSet);
+    this->updateKeyValue(this->chemicalKeyMap, this->chemicalValueVect, Cid, timeStamp, biteOffSet);
 }
 
 std::string CLMS::ChemicalLogComponent::getPackedData(const void* data, const char del) {

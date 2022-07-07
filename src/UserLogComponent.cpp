@@ -1,11 +1,30 @@
 
 #include "../lib/userLogComponent.hpp"
 
+void printDebug2(std::unordered_map<std::string, CLMS::LogComponent::Key>& keyMap, std::vector<CLMS::LogComponent::Value> valueVect) {
+    for (auto key : keyMap) {
+        std::cout << std::setw(45) << std::setfill('%') << "" << std::endl;
+        int i = key.second.firstTimeStampIndex;
+        CLMS::LogComponent::Value value = valueVect[i];
+        while (1) {
+            std::cout << "Uid : " << key.first << ", timestamp : " << value.timestamp << ", ts biteOffset : " << value.biteOffSet << ", index : " << i << std::endl;
+            i = value.nextIndex;
+            if (i != -1) {
+                value = valueVect[i];
+            }else {
+                break;
+            }
+        }
+    }
+}
+
 CLMS::UserLogComponent::UserLogComponent() : LogComponent("UserLog", {"log", "user"}) {
     std::cout << "UserLogComponent\n";
     openFile(this->UserKeyIndexFile, getFilePath("User", this->dirChain, FileType::IndexKeyFile), std::ios::in);
     openFile(this->UserValueIndexFile, getFilePath("User", this->dirChain, FileType::IndexValueFile), std::ios::in);
     loadKeyValueIndexFile(this->UserKeyIndexFile, this->UserValueIndexFile, this->userKeyMap, this->userValueVect);
+    std::cout << "Loaded...\n";
+    printDebug2(this->userKeyMap, this->userValueVect);
     this->UserKeyIndexFile.close();
     this->UserValueIndexFile.close();
 }
@@ -13,6 +32,8 @@ CLMS::UserLogComponent::UserLogComponent() : LogComponent("UserLog", {"log", "us
 CLMS::UserLogComponent::~UserLogComponent() {
     openFile(this->UserKeyIndexFile, getFilePath("User", this->dirChain, FileType::IndexKeyFile), std::ios::out);
     openFile(this->UserValueIndexFile, getFilePath("User", this->dirChain, FileType::IndexValueFile), std::ios::out);
+    std::cout << "Saving...\n";
+    printDebug2(this->userKeyMap, this->userValueVect);
     saveKeyValueIndexFile(this->UserKeyIndexFile, this->UserValueIndexFile, this->userKeyMap, this->userValueVect);
     this->UserKeyIndexFile.close();
     this->UserValueIndexFile.close();

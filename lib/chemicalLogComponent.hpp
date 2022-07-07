@@ -10,9 +10,9 @@ namespace CLMS {
     class ChemicalLogComponent : public LogComponent {
         protected:
 
-            std::unordered_map<std::string, Key> userKeyMap;
-            std::vector<Value> userValueVect;
-            std::fstream componentKeyIndexFile, componentValueIndexFile;
+            std::unordered_map<std::string, Key> userKeyMap, chemicalKeyMap;
+            std::vector<Value> userValueVect, chemicalValueVect;
+            std::fstream UserKeyIndexFile, UserValueIndexFile, ChemicalKeyIndexFile, ChemicalValueIndexFile;
         public:
 
             ChemicalLogComponent();

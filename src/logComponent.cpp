@@ -8,15 +8,41 @@ CLMS::LogComponent::LogComponent(std::string logName, std::vector<std::string> d
 
 CLMS::LogComponent::~LogComponent() {}
 
+
+void printDebug1(std::unordered_map<std::string, CLMS::LogComponent::Key>& keyMap, std::vector<CLMS::LogComponent::Value> valueVect) {
+    std::cout << "printDebug1\n";
+    for (auto key : keyMap) {
+        std::cout << std::setw(45) << std::setfill('%') << "" << std::endl;
+        int i = key.second.firstTimeStampIndex;
+        CLMS::LogComponent::Value value = valueVect[i];
+        while (1) {
+            std::cout << "Uid : " << key.first << ", timestamp : " << value.timestamp << ", ts biteOffset : " << value.biteOffSet << ", index : " << i << std::endl;
+            i = value.nextIndex;
+            if (i != -1) {
+                value = valueVect[i];
+            }else {
+                break;
+            }
+        }
+    }
+}
+
+
 void CLMS::LogComponent::loadKeyValueIndexFile(std::fstream& KeyStream, std::fstream& ValueStream, std::unordered_map<std::string, Key>& KeyMap, std::vector<Value>& valueVect) {
     std::cout << "loadKeyValueIndexFile\n";
     if (!KeyStream.eof()) {
         std::cout << "loading KeyStream...\n";
         KeyMap = std::unordered_map<std::string, Key>();
-        char key[7], biteOffSet[16];
+        char temp[2], key[7], biteOffSet[16];
+        KeyStream.seekg(KeyStream.tellg());
         while (!KeyStream.eof()) {
+            std::cout << "Reading\n";
             KeyStream.seekg(((int)KeyStream.tellg()) + 1);
             KeyStream.getline(key, 8, ':');
+            std::cout << "Key : " << key << "\n";
+            if (key[0] == '\0') {
+                break;
+            }
             KeyStream.getline(biteOffSet, 16, '#');
             if (key[0] != '\0') {
                 int bfs = std::atoi(biteOffSet);
@@ -54,6 +80,7 @@ void CLMS::LogComponent::loadKeyValueIndexFile(std::fstream& KeyStream, std::fst
     }else {
         valueVect = std::vector<Value>();
     }
+    printDebug1(KeyMap, valueVect);
 }
 
 void CLMS::LogComponent::saveKeyValueIndexFile(std::fstream& KeyStream, std::fstream& ValueStream, std::unordered_map<std::string, Key>& KeyMap, std::vector<Value>& valueVect) {
