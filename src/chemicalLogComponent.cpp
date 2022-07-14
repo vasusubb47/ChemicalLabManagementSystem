@@ -2,7 +2,6 @@
 #include "../lib/chemicalLogComponent.hpp"
 
 CLMS::ChemicalLogComponent::ChemicalLogComponent() : LogComponent("ChemicalLog", {"log", "chemical"}) {
-    std::cout << "ChemicalLogComponent\n";
     openFile(this->UserKeyIndexFile, getFilePath("User", this->dirChain, FileType::IndexKeyFile), std::ios::in);
     openFile(this->UserValueIndexFile, getFilePath("User", this->dirChain, FileType::IndexValueFile), std::ios::in);
     loadKeyValueIndexFile(this->UserKeyIndexFile, this->UserValueIndexFile, this->userKeyMap, this->userValueVect);
@@ -31,7 +30,7 @@ CLMS::ChemicalLogComponent::~ChemicalLogComponent() {
 void CLMS::ChemicalLogComponent::getComponentInput() {
     std::string Uid, Cid, Quantity, Action;
     uint64_t timeStamp;
-    std::cout << "Enter the Chemical Log Uid, Chemical Log Cid, Quantity and action: ";
+    std::cout << "Enter the Chemical Log Uid, Chemical Log Cid, Quantity, action: ";
     std::cin >> Uid >> Cid >> Quantity >> Action;
     timeStamp = getCurrentTime();
     ChemicalLog cLog = ChemicalLog(

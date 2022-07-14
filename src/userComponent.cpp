@@ -2,7 +2,6 @@
 #include "../lib/userComponent.hpp"
 
 CLMS::UserComponent::UserComponent() : Component("UserComponent", ComponentType::DataComponent, {"component", "User"}) {
-    std::cout << "UserComponent\n";
     loadIndex();
 }
 
@@ -10,7 +9,7 @@ CLMS::UserComponent::~UserComponent(){}
 
 void CLMS::UserComponent::getComponentInput() {
     std::string Id, Name, Contact;
-    std::cout << "Enter User Information : ";
+    std::cout << "Enter User Information Id, Name, Contact : ";
     std::cin >> Id >> Name >> Contact;
     User user = User(
         Id, Name, Contact

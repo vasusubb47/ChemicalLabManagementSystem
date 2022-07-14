@@ -5,14 +5,12 @@ CLMS::Component::Component(const std::string& componentName, ComponentType compo
     this->componentName = componentName;
     this->componentType = componentType;
     this->dirChain = dirChain;
-    std::cout << "Component: " << componentName << "\n";
 }
 
 CLMS::Component::Component(const CLMS::Component& component) {
     this->componentName = component.componentName;
     this->componentType = component.componentType;
     this->dirChain = component.dirChain;
-    std::cout << "Component (ref): " << componentName << "\n";
 }
 
 CLMS::Component::~Component() {
@@ -71,7 +69,6 @@ void CLMS::Component::loadIndex() {
     std::string data = "";
     this->componentIndexFile >> data;
     if (data.size() > 0) {
-        std::cout << data << "\n";
         std::string delimiter = "#";
         size_t pos = 0;
         std::string temp_str;
@@ -86,9 +83,6 @@ void CLMS::Component::loadIndex() {
                 std::atoi(temp_str.substr(colDel + 1).c_str())
             });
             data.erase(0, pos + delimiter.length());
-        }
-        for(auto i = this->index.begin() ; i != this->index.end() ; i++){
-            std::cout << i->first << ", " << i->second << "\n";
         }
     }else {
         openFile(this->componentIndexFile, getFilePath(this->componentName, this->dirChain, fileType), std::ios::out);
@@ -120,7 +114,6 @@ uint32_t CLMS::Component::writeDataAndUpdateIndex(const std::string& PackedData,
 }
 
 std::vector<std::vector<std::string>> CLMS::Component::getData(std::vector<std::string> ids) {
-    std::cout << "Parent : " << ids.size() << "\n";
     std::vector<std::vector<std::string>> data;
     if (ids.size() == 0) {
         for (auto i : this->index) {

@@ -11,17 +11,6 @@
 
 using namespace CLMS;
 
-void print(std::vector<std::vector<std::string>>& data) {
-    std::cout << "Print\n";
-    for (auto vect : data) {
-        std::cout << "[";
-        for (auto d : vect) {
-            std::cout << d << ", ";
-        }
-        std::cout << "]\n";
-    }
-}
-
 int main(int argc, char** argv) {
     // creating all the folders required by the project
     // all the folders will be created at initial run of the project
@@ -40,15 +29,6 @@ int main(int argc, char** argv) {
     ChemicalComponent chemicalComp = ChemicalComponent();
     UserLogComponent userLogComp = UserLogComponent();
     ChemicalLogComponent chemicalLogComp = ChemicalLogComponent();
-
-    auto data = userComp.getData({"UID001"});
-    print(data);
-    data = chemicalComp.getData({"CID001"});
-    print(data);
-    data = userLogComp.getData({"UID001", "1657200661487576300"});
-    print(data);
-    data = chemicalLogComp.getData({"CID003", "UID002", "1657200731401042600"});
-    print(data);
 
     do {
         std::cout << "1> Insert Data, 2> View Data, 3> Saving Data, 4> Quit\n";
@@ -95,24 +75,29 @@ int main(int argc, char** argv) {
                 std::cout << "1> User 2> userLog 3> Chemical 4> ChemicalLog\n";
                 int fileType, temp;
                 std::cin >> option;
-                std::vector<std::string> headers;
-                std::cout<<"1> Json, 2> CSV, 3> TSV";
+                std::vector<std::string> headers, ids;
+                std::cout<<"1> Json, 2> CSV, 3> TSV\n";
                 std::cin>>fileType;
                 std::vector<std::vector<std::string>> data;
                 std::string id;
-                std::cout << "Enter the id for single entry or empty for all entries: " ;
+                std::cout << "Enter the id for single entry or single random char for all entries: " ;
                 std::cin >> id;
+                if (id.size() == 1) {
+                    ids = {};
+                }else {
+                    ids = {id};
+                }
                 if (option == 1) {
-                    data = userComp.getData({id});
+                    data = userComp.getData(ids);
                     headers = userComp.getHeaders();
                 }else if (option == 2) {
-                    data = userLogComp.getData({id});
+                    data = userLogComp.getData(ids);
                     headers = userLogComp.getHeaders();
                 }else if (option == 3) {
-                    data = chemicalComp.getData({id});
+                    data = chemicalComp.getData(ids);
                     headers = chemicalComp.getHeaders();
                 }else if (option == 4) {
-                    data = chemicalLogComp.getData({id});
+                    data = chemicalLogComp.getData(ids);
                     headers = chemicalLogComp.getHeaders();
                 }
                 FileType ft;
