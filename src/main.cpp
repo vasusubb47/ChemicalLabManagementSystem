@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     print(data);
 
     do {
-        std::cout << "1> Insert Data, 2> View Data, 4> Quit\n";
+        std::cout << "1> Insert Data, 2> View Data, 3> Saving Data, 4> Quit\n";
         std::cin >> option;
         // option = 4;
         switch (option) {
@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
                 option = 0;
             }; break;
             case 2: {
-                std::cout << "1> User 2> userLog\n";
+                std::cout << "1> User 2> userLog 3> Chemical 4> ChemicalLog\n";
                 std::cin >> option;
                 std::vector<std::string> data;
                 std::string id;
@@ -89,6 +89,49 @@ int main(int argc, char** argv) {
                     std::cout << usrD << ", ";
                 }
                 std::cout << std::endl;
+                option = 0;
+            }; break;
+            case 3: {
+                std::cout << "1> User 2> userLog 3> Chemical 4> ChemicalLog\n";
+                int fileType, temp;
+                std::cin >> option;
+                std::vector<std::string> headers;
+                std::cout<<"1> Json, 2> CSV, 3> TSV";
+                std::cin>>fileType;
+                std::vector<std::vector<std::string>> data;
+                std::string id;
+                std::cout << "Enter the id for single entry or empty for all entries: " ;
+                std::cin >> id;
+                if (option == 1) {
+                    data = userComp.getData({id});
+                    headers = userComp.getHeaders();
+                }else if (option == 2) {
+                    data = userLogComp.getData({id});
+                    headers = userLogComp.getHeaders();
+                }else if (option == 3) {
+                    data = chemicalComp.getData({id});
+                    headers = chemicalComp.getHeaders();
+                }else if (option == 4) {
+                    data = chemicalLogComp.getData({id});
+                    headers = chemicalLogComp.getHeaders();
+                }
+                FileType ft;
+                if(fileType == 1)
+                    ft = FileType::JSON;
+                else if(fileType == 2)
+                    ft = FileType::CSV;
+                else if(fileType == 3)
+                    ft = FileType::TSV;
+                else{
+                    std::cout<<"Invalid file type"<<std::endl;
+                    option = 0;
+                    break;
+                }
+                FileSave fs(std::to_string(getCurrentTime()), ft, headers);
+                for(auto d : data)
+                {
+                    fs.writeData(d);
+                }
                 option = 0;
             }; break;
         }
