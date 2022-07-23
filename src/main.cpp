@@ -52,23 +52,39 @@ int main(int argc, char** argv) {
             case 2: {
                 std::cout << "1> User 2> userLog 3> Chemical 4> ChemicalLog\n";
                 std::cin >> option;
-                std::vector<std::string> data;
+                std::vector<std::string> headers, ids;
                 std::string id;
-                std::cout << "Enter the id : " ;
+                std::vector<std::vector<std::string>> data;
+                std::cout << "Enter the id for single entry or single random char for all entries: " ;
                 std::cin >> id;
+                if (id.size() == 1) {
+                    ids = {};
+                }else {
+                    ids = {id};
+                }
                 if (option == 1) {
-                    data = userComp.extractData(id);
+                    data = userComp.getData(ids);
+                    headers = userComp.getHeaders();
                 }else if (option == 2) {
-                    data = userLogComp.extractData(id);
+                    data = userLogComp.getData(ids);
+                    headers = userLogComp.getHeaders();
                 }else if (option == 3) {
-                    data = chemicalComp.extractData(id);
+                    data = chemicalComp.getData(ids);
+                    headers = chemicalComp.getHeaders();
                 }else if (option == 4) {
-                    data = chemicalLogComp.extractData(id);
+                    data = chemicalLogComp.getData(ids);
+                    headers = chemicalLogComp.getHeaders();
                 }
-                for (std::string usrD : data) {
-                    std::cout << usrD << ", ";
+                for (std::string head : headers) {
+                    std::cout << head << "\t";
                 }
-                std::cout << std::endl;
+                std::cout << "\n";
+                for (std::vector<std::string> usrD : data) {
+                    for (std::string dat : usrD) {
+                        std::cout << dat << "\t";
+                    }
+                    std::cout << "\n";
+                }
                 option = 0;
             }; break;
             case 3: {
